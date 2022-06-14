@@ -3,7 +3,6 @@ use reqwest::StatusCode;
 use tokio;
 mod siteinfo;
 
-//#[tokio::main]
 fn main() { 
     let emptlist: Vec<String> = Vec::new();
     use siteinfo::list::list;
@@ -19,8 +18,6 @@ fn main() {
                 let response = client
                     .get(&newlist[x])
                     .send()
-                    // each response is wrapped in a `Result` type
-                    // we'll unwrap here for simplicity
                     .await
                     .unwrap();
                 match response.status() {
