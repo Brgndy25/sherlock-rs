@@ -2,11 +2,11 @@ use reqwest;
 use reqwest::StatusCode;
 use tokio;
 mod siteinfo;
-
+use siteinfo::list::list;
+ 
 fn main() { 
-    let emptlist: Vec<String> = Vec::new();
-    use siteinfo::list::list;
-    let newlist = list(emptlist).clone();
+    let mut emptlist = Vec::new();
+    emptlist = list(&mut emptlist);
     let client = reqwest::Client::new();
     tokio::runtime::Builder::new_multi_thread()
         .worker_threads(12)
@@ -14,16 +14,18 @@ fn main() {
         .build()
         .unwrap()
         .block_on(async {
-            for x in 0..newlist.len() {
+            for x in 0..emptlist.len() {
                 let response = client
-                    .get(&newlist[x])
+                    .get(&emptlist[x])
                     .send()
                     .await
                     .unwrap();
                 match response.status() {
-                    StatusCode::OK => println!("{}", newlist[x]),
+                    StatusCode::OK => println!("{}", emptlist[x]),
                     _other => println!("NOT FOUND!"),
                 };
             }
         })
 }
+
+
