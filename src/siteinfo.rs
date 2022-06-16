@@ -1,24 +1,29 @@
-pub mod userinput {
-    pub fn userinput(mut username: String) -> String {
-        use std::io::stdin;
+pub mod list {
+    use std::io::stdin;
+    pub fn list(sitelist: &Vec<String>) -> Vec<String> {
+        let mut username = String::new();
         println!("Please input the username");
         stdin().read_line(&mut username).ok().expect("Failed!");
-        return username;
-    }
-}
-
-pub mod list {
-    pub fn list(list: Vec<String>) -> Vec<String> {
-        use super::userinput::userinput;
-        let usernameorg = String::new();
-        let username = userinput(usernameorg);
-        let list = [
-            format!("https://vk.com/{username}"),
-            format!("https://www.buzzfeed.com/{username}"),
-            format!("https://soundcloud.com/{username}"),
-            format!("https://www.facebook.com/{username}"),
-            format!("https://www.instagram.com/{username}"),
+        let mut finallist = Vec::new();
+        
+        let sitelist = [
+            "https://vk.com/",
+            "https://www.buzzfeed.com/",
+            "https://soundcloud.com/",
+            "https://www.facebook.com/",
+            "https://www.instagram.com/",
+            "https://www.github.com/",
         ];
-        return list.to_vec();
+        tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(12)
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(async {for x in sitelist {
+          finallist.push(format!("{x}{username}"));
     }
+});
+    drop(sitelist);
+    finallist
+}
 }
